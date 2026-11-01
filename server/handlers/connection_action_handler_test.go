@@ -139,6 +139,10 @@ func TestSetMeshsyncMode_FailedRedeployEmitsIndependentEvents(t *testing.T) {
 		if broadcast[0] == broadcast[1] {
 			t.Fatalf("both broadcasts carry the same *events.Event")
 		}
+		if broadcast[0].OperationID != broadcast[1].OperationID {
+			t.Errorf("live events of one mode change no longer share an OperationID: %s vs %s",
+				broadcast[0].OperationID, broadcast[1].OperationID)
+		}
 
 		var persisted []events.Event
 		for deadline := time.Now().Add(2 * time.Second); len(persisted) < 2 && time.Now().Before(deadline); {
